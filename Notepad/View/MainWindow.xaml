@@ -1,0 +1,121 @@
+﻿<Window x:Class="Notepad.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Notepad.ViewModel"
+        xmlns:c="clr-namespace:Notepad.Converter"
+        mc:Ignorable="d"
+        Title="{Binding WindowTitle}"
+        Height="{Binding Source={StaticResource Settings}, Path=Default.WindowHeight, Mode=TwoWay}"
+        Width="{Binding Source={StaticResource Settings}, Path=Default.WindowWidth, Mode=TwoWay}"
+        Left="{Binding Source={StaticResource Settings}, Path=Default.WindowLeft, Mode=TwoWay}"
+        Top="{Binding Source={StaticResource Settings}, Path=Default.WindowTop, Mode=TwoWay}"
+        WindowState="{Binding Source={StaticResource Settings}, Path=Default.WindowState, Mode=TwoWay}"
+        WindowStartupLocation="Manual"
+        MinHeight="300"
+        MinWidth="300"
+        FocusManager.FocusedElement="{Binding ElementName=txtContent}"
+        Closing="Window_Closing">
+
+    <Window.DataContext>
+        <vm:ContentViewModel x:Name="viewModel"></vm:ContentViewModel>
+    </Window.DataContext>
+
+    <DockPanel LastChildFill="True">
+
+        <Menu DockPanel.Dock="Top" Padding="2">
+            <MenuItem Header="_File">
+                <MenuItem
+                    Name="mnuNew"
+                    Header="_New"
+                    Command="{Binding NewFileCommand}"></MenuItem>
+                <MenuItem
+                    Name="mnuOpen"
+                    Header="_Open..."
+                    Command="{Binding OpenFileCommand}"></MenuItem>
+                <MenuItem
+                    Name="mnuSave"
+                    Header="_Save"
+                    Command="{Binding SaveFileCommand}"></MenuItem>
+                <MenuItem
+                    Name="mnuSaveAs"
+                    Header="Save _As..."
+                    Command="{Binding SaveAsFileCommand}"></MenuItem>
+                <Separator></Separator>
+                <MenuItem
+                    Name="mnuExit"
+                    Header="E_xit"
+                    Command="{Binding ExitCommand}"></MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="_Edit">
+                <MenuItem
+                    Header="Cu_t"
+                    Command="ApplicationCommands.Cut"></MenuItem>
+                <MenuItem
+                    Header="_Copy"
+                    Command="ApplicationCommands.Copy"></MenuItem>
+                <MenuItem
+                    Header="_Paste"
+                    Command="ApplicationCommands.Paste"></MenuItem>
+                <Separator></Separator>
+                <MenuItem
+                    Header="_Select All"
+                    Command="ApplicationCommands.SelectAll"></MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="F_ormat">
+                <MenuItem
+                    Name="mnuWrap"
+                    Header="_Word Wrap"
+                    IsCheckable="True"
+                    IsChecked="{Binding LineWrap, Mode=TwoWay}"></MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="_Help">
+                <MenuItem
+                    Name="mnuAbout"
+                    Header="_About"
+                    Command="{Binding ShowAboutDialogCommand}"></MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <StatusBar DockPanel.Dock="Bottom">
+            <TextBlock
+                Name="statusBar"
+                Text="{Binding StatusBarText}"></TextBlock>
+        </StatusBar>
+
+        <Grid>
+
+            <TextBox
+                    Name="txtContent"
+                    Text="{Binding Path=Content.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    AcceptsReturn="True"
+                    AcceptsTab="True"
+                    VerticalScrollBarVisibility="Visible"
+                    Padding="2"
+                    FontFamily="Courier New"
+                    FontSize="14"
+                    TextChanged="TxtContent_TextChanged"
+                    SelectionChanged="TxtContent_SelectionChanged">
+                <TextBox.HorizontalScrollBarVisibility>
+                    <Binding Path="ShowHorizontalScrollBar">
+                        <Binding.Converter>
+                            <c:BoolToScrollBarVisibilityConverter></c:BoolToScrollBarVisibilityConverter>
+                        </Binding.Converter>
+                    </Binding>
+                </TextBox.HorizontalScrollBarVisibility>
+                <TextBox.TextWrapping>
+                    <Binding Path="LineWrap">
+                        <Binding.Converter>
+                            <c:BoolToLineWrapConverter></c:BoolToLineWrapConverter>
+                        </Binding.Converter>
+                    </Binding>
+                </TextBox.TextWrapping>
+            </TextBox>
+
+        </Grid>
+    </DockPanel>
+</Window>
